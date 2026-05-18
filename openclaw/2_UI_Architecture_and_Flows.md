@@ -42,7 +42,18 @@ version: 0.1
 
 ## 2.5 Specifica per Vista (template)
 
+## 2.5A Matrice Vista ↔ Data ↔ Errori ↔ Audit
+
+| Vista | Modelli (Data) | Errori chiave (mock) | Audit atteso |
+|---|---|---|---|
+| Jira — Ticket Detail | JiraTicket, AuditEvent | INTEGRATION_ERROR, POLICY_BLOCK, FORBIDDEN | Eventi STATE_CHANGE e correlazione ticketId/runId |
+| n8n — Execution Detail | AutomationRun, JiraTicket, AuditEvent, DbSnapshot, TokenUsage | INTEGRATION_ERROR, SNAPSHOT_REQUIRED, BUDGET_BREACH | Timeline step con runId; export log redatti |
+| Interfaccia AI — Sessione Operativa | Tenant, JiraTicket, SecretItem, AuditEvent | POLICY_BLOCK, FORBIDDEN, AUTH_REQUIRED | Ogni azione/tool e accesso secret → AuditEvent redacted |
+| Reverse Proxy — Routing | ProxyRoute, Node, AuditEvent | VALIDATION_ERROR, INTEGRATION_ERROR | Modifica route e health check → AuditEvent |
+| Audit/Logs — Explorer | AuditEvent, AutomationRun, JiraTicket | FORBIDDEN | Export bundle per tenant/ticket/run |
+| FinOps/Osservabilità — Dashboard | TokenUsage, BudgetLimit, WatchdogEvent, AuditEvent | BUDGET_BREACH, INTEGRATION_ERROR | Modifiche budget/azioni contenimento → AuditEvent |
 ### Vista: Jira — Ticket Detail (Selected for AI / Processing / Pending Review)
+
 
 - Scopo: rappresentare la singola unità di lavoro tracciata e governare lo stato macchina.
 - Chi la usa: Operatore, (in lettura) Agente tramite integrazione.
