@@ -65,3 +65,47 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
 ## Next Step
 
 - Handoff all’AI builder: usare i 3 master come unica fonte di verità per avviare la fase di implementazione (in un workspace/app dedicato).
+
+## Fase Codice (pre-clone → start coding)
+
+### Freeze & governance
+
+- Usa come “contratto” immutabile: `openclaw/1_PRD_Master.md`, `openclaw/2_UI_Architecture_and_Flows.md`, `openclaw/3_Data_Models_and_Mock_Data.md` + questo file.
+- Ogni deviazione da Decisioni Default/KPI/Invarianti/Matrici richiede ADR esplicito e tag Git dedicato.
+
+### Workspace strategy (“Fork, Merge & Inject”)
+
+- Crea una workspace separata per la fase codice (non in questo repo contesto-only).
+- Importa il contesto come input read-only nella nuova workspace; i master restano la fonte (eventuale copia solo per consultazione).
+
+### Prerequisiti tecnici
+
+- Definisci repo ufficiale OpenClaw e modalità: fork vs clone diretto (preferire fork per isolare le modifiche).
+- Policy segreti: nessun `.env` committato; segreti solo via secret manager; redazione log obbligatoria.
+- Baseline verifica: lint/test, CI locale, standard commit/tag per step funzionali.
+
+### Clone/bootstrap
+
+- Clona/forka la repo ufficiale nella nuova workspace e crea branch `integration-from-context`.
+- Inietta il contratto: mappa FR → moduli/servizi reali e crea backlog tecnico equivalente.
+
+### Gap analysis (repo vs contratto)
+
+- Inventory componenti esistenti (auth, orchestrazione, audit, RAG, finops, proxy, provisioning, offboarding).
+- Per ogni FR: “già coperto / parziale / mancante” usando la matrice FR↔UI↔Data↔Audit del PRD.
+- Lista “missing code units” (moduli, API, job, workflow n8n, policy enforcement, export bundle) con priorità.
+
+### Implementazione per tranche (audit-first)
+
+- Tranche A: AuditEvent + correlazione + redazione + export bundle.
+- Tranche B: Jira↔n8n pipeline + guardrail Pending Review (policy block).
+- Tranche C: Vault/Secrets contract + enforcement “no leak”.
+- Tranche D: RAG (Confluence cache → pgvector) + sync schedulato.
+- Tranche E: FinOps (TokenUsage/BudgetLimit) + watchdog/kill-switch.
+- Tranche F: Snapshot/rollback + offboarding.
+- Tranche G: Reverse proxy routing (single ingress) e hardening.
+
+### Verifica & release discipline
+
+- Per ogni tranche: test minimi + evidenze (log redatti) + tag Git.
+- Verifica KPI e invarianti (tenant isolation, no secrets, pending review hard stop).
