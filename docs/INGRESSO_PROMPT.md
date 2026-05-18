@@ -19,6 +19,7 @@ Obiettivo: organizzare il contesto di “OpenClaw” per un AI builder in pochi 
   - `openclaw/3_Data_Models_and_Mock_Data.md`
 - Se manca un’informazione necessaria, non inventare: aggiungi “DA DECIDERE” e una domanda specifica.
 - Scrivi in linguaggio business e derivane requisiti, UI, dati.
+- La fase codice non avviene in questo repo: segui `docs/CONTEXT.md` (sezione “Fase Codice”) e usa i master come contratto read-only; deviazioni solo via ADR + tag Git.
 
 ## Output in chat
 
