@@ -396,6 +396,32 @@ version: 0.1
 }
 ```
 
+**Mock JSON (lista)**
+```json
+[
+  {
+    "id": "route_openwebui",
+    "tenantId": "tnt_cliente_x",
+    "entrypoint": "HOST_8080",
+    "match": { "pathPrefix": "/ai" },
+    "target": { "service": "openwebui", "internalUrl": "http://openwebui:3000" },
+    "enabled": true,
+    "createdAt": "2026-05-18T21:12:00Z",
+    "updatedAt": "2026-05-18T21:12:00Z"
+  },
+  {
+    "id": "route_n8n",
+    "tenantId": "tnt_cliente_x",
+    "entrypoint": "HOST_8080",
+    "match": { "pathPrefix": "/n8n" },
+    "target": { "service": "n8n", "internalUrl": "http://n8n:5678" },
+    "enabled": true,
+    "createdAt": "2026-05-18T21:12:00Z",
+    "updatedAt": "2026-05-18T21:12:00Z"
+  }
+]
+```
+
 ### Model: DbSnapshot
 
 **Descrizione business**
@@ -428,6 +454,32 @@ version: 0.1
 }
 ```
 
+**Mock JSON (lista)**
+```json
+[
+  {
+    "id": "snap_20260518_001",
+    "tenantId": "tnt_cliente_x",
+    "scope": "POSTGRES",
+    "reason": "Prima di applicare migrazione automatica",
+    "createdBy": "AUTOMATION",
+    "status": "CREATED",
+    "createdAt": "2026-05-18T21:22:00Z",
+    "updatedAt": "2026-05-18T21:22:00Z"
+  },
+  {
+    "id": "snap_20260518_002",
+    "tenantId": "tnt_cliente_x",
+    "scope": "ALL",
+    "reason": "Prima di rerun workflow su ticket critico",
+    "createdBy": "OPERATOR",
+    "status": "CREATED",
+    "createdAt": "2026-05-18T21:50:00Z",
+    "updatedAt": "2026-05-18T21:50:00Z"
+  }
+]
+```
+
 ### Model: WatchdogEvent
 
 **Descrizione business**
@@ -456,6 +508,30 @@ version: 0.1
   "action": "STOP_RUN",
   "createdAt": "2026-05-18T21:28:00Z"
 }
+```
+
+**Mock JSON (lista)**
+```json
+[
+  {
+    "id": "wd_0001",
+    "tenantId": "tnt_cliente_x",
+    "runId": "run_20260518_001",
+    "severity": "CRITICAL",
+    "signal": "MEM_SPIKE",
+    "action": "STOP_RUN",
+    "createdAt": "2026-05-18T21:28:00Z"
+  },
+  {
+    "id": "wd_0002",
+    "tenantId": "tnt_cliente_x",
+    "runId": "run_20260518_001",
+    "severity": "WARN",
+    "signal": "CPU_SPIKE",
+    "action": "ALERT_ONLY",
+    "createdAt": "2026-05-18T21:27:30Z"
+  }
+]
 ```
 
 ### Model: TokenUsage
@@ -496,6 +572,38 @@ version: 0.1
 }
 ```
 
+**Mock JSON (lista)**
+```json
+[
+  {
+    "id": "tok_20260518_001",
+    "tenantId": "tnt_cliente_x",
+    "runId": "run_20260518_001",
+    "ticketId": "JIRA-123",
+    "provider": "OPENAI",
+    "model": "gpt-5",
+    "inputTokens": 12000,
+    "outputTokens": 4500,
+    "totalTokens": 16500,
+    "estimatedCostUsd": 1.85,
+    "createdAt": "2026-05-18T21:35:00Z"
+  },
+  {
+    "id": "tok_20260518_002",
+    "tenantId": "tnt_cliente_x",
+    "runId": "run_20260518_002",
+    "ticketId": "JIRA-124",
+    "provider": "OPENAI",
+    "model": "gpt-5",
+    "inputTokens": 8000,
+    "outputTokens": 3200,
+    "totalTokens": 11200,
+    "estimatedCostUsd": 1.10,
+    "createdAt": "2026-05-18T22:05:00Z"
+  }
+]
+```
+
 ### Model: BudgetLimit
 
 **Descrizione business**
@@ -523,6 +631,32 @@ version: 0.1
   "createdAt": "2026-05-18T21:05:00Z",
   "updatedAt": "2026-05-18T21:05:00Z"
 }
+```
+
+**Mock JSON (lista)**
+```json
+[
+  {
+    "id": "bud_tnt_cliente_x_monthly",
+    "tenantId": "tnt_cliente_x",
+    "period": "MONTHLY",
+    "maxCostUsd": 250.0,
+    "actionOnBreach": "STOP_RUNS",
+    "enabled": true,
+    "createdAt": "2026-05-18T21:05:00Z",
+    "updatedAt": "2026-05-18T21:05:00Z"
+  },
+  {
+    "id": "bud_tnt_cliente_x_daily",
+    "tenantId": "tnt_cliente_x",
+    "period": "DAILY",
+    "maxCostUsd": 15.0,
+    "actionOnBreach": "ALERT_ONLY",
+    "enabled": true,
+    "createdAt": "2026-05-18T21:05:00Z",
+    "updatedAt": "2026-05-18T21:05:00Z"
+  }
+]
 ```
 
 ### Model: OffboardingJob
@@ -554,6 +688,33 @@ version: 0.1
 }
 ```
 
+**Mock JSON (lista)**
+```json
+[
+  {
+    "id": "off_20260518_001",
+    "tenantId": "tnt_cliente_x",
+    "status": "SUCCEEDED",
+    "steps": [
+      { "name": "revoke_and_purge_secrets", "status": "SUCCEEDED", "startedAt": "2026-05-18T22:00:00Z", "finishedAt": "2026-05-18T22:01:00Z" }
+    ],
+    "createdAt": "2026-05-18T21:55:00Z",
+    "updatedAt": "2026-05-18T22:10:00Z"
+  },
+  {
+    "id": "off_20260501_001",
+    "tenantId": "tnt_cliente_y",
+    "status": "FAILED",
+    "steps": [
+      { "name": "revoke_and_purge_secrets", "status": "SUCCEEDED", "startedAt": "2026-05-01T18:00:00Z", "finishedAt": "2026-05-01T18:01:00Z" },
+      { "name": "export_audit_bundle", "status": "FAILED", "startedAt": "2026-05-01T18:01:00Z", "errorCode": "STORAGE_UNAVAILABLE" }
+    ],
+    "createdAt": "2026-05-01T17:55:00Z",
+    "updatedAt": "2026-05-01T18:02:00Z"
+  }
+]
+```
+
 ## 3.3 Error Payload (mock)
 
 ```json
@@ -563,6 +724,76 @@ version: 0.1
     "message": "Campo non valido",
     "details": [
       { "field": "name", "reason": "REQUIRED" }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "AUTH_REQUIRED",
+    "message": "Autenticazione richiesta",
+    "details": []
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "Permessi insufficienti",
+    "details": [
+      { "reason": "TENANT_SCOPE_VIOLATION" }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "POLICY_BLOCK",
+    "message": "Azione bloccata da policy",
+    "details": [
+      { "reason": "PENDING_REVIEW_REQUIRED" }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "INTEGRATION_ERROR",
+    "message": "Errore integrazione esterna",
+    "details": [
+      { "system": "JIRA", "reason": "WEBHOOK_DELIVERY_FAILED" }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "BUDGET_BREACH",
+    "message": "Budget superato: esecuzione bloccata",
+    "details": [
+      { "period": "MONTHLY", "maxCostUsd": 250.0, "action": "STOP_RUNS" }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "SNAPSHOT_REQUIRED",
+    "message": "Snapshot richiesto prima di procedere",
+    "details": [
+      { "scope": "POSTGRES", "reason": "DESTRUCTIVE_OPERATION" }
     ]
   }
 }
