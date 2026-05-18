@@ -11,6 +11,7 @@ Obiettivo: organizzare il contesto di “OpenClaw” per un AI builder in pochi 
 
 - Non generare codice applicativo.
 - Leggi `docs/CONTEXT.md` prima di modificare qualsiasi cosa e aggiornalo dopo ogni change.
+- Tratta `openclaw/0_CORE_DA_COMPILARE.md` come “Sacro Graal” (fonte originale) e non modificarne mai il backup immutabile.
 - Mantieni tutto consolidato nei 3 file master:
   - `openclaw/1_PRD_Master.md`
   - `openclaw/2_UI_Architecture_and_Flows.md`

@@ -7,7 +7,7 @@ kind: living-context
 
 ## Obiettivo
 
-Creare un modulo “OpenClaw” (contesto-only) progettato per essere consumato da un AI builder: poche fonti master, zero codice in questa fase, focus su business logic e superfici UI necessarie.
+Consolidare il “Sacro Graal” (master prompt/visione) di OpenClaw in 3 file master per un AI builder: zero codice in questa fase, requisiti deterministici, flussi operativi e modelli dati coerenti.
 
 ## Fonte di verità (ordine di lettura)
 
@@ -16,6 +16,11 @@ Creare un modulo “OpenClaw” (contesto-only) progettato per essere consumato 
 3. `openclaw/3_Data_Models_and_Mock_Data.md`
 
 Regola: se un’informazione è necessaria per costruire il modulo/app, deve stare in uno di questi tre file (evitare frammentazione).
+
+## Sacro Graal (protezione)
+
+- Fonte originale (editabile): `openclaw/0_CORE_DA_COMPILARE.md`
+- Backup immutabile (read-only): `openclaw/0_CORE__SACRO_GRAAL__IMMUTABLE__20260518_215205.md`
 
 ## Stato Corrente
 
@@ -38,4 +43,4 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
 
 ## Next Step
 
-- Riempire i 3 master file a partire dal “santo graal” del modulo OpenClaw.
+- Derivare requisiti, flussi e modelli dati dal Sacro Graal, mantenendo “DA DECIDERE” dove manca una scelta esplicita.
