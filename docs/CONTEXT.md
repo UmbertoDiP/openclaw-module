@@ -38,12 +38,15 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
 - Sacro Graal protetto (fonte editabile + backup immutabile read-only).
 - Decisioni default fissate (UI/Vault/RAG/Audit/porte/subnet/naming).
 - Struttura consolidata e coerente in 3 file master (PRD/UI/Data), senza “DA DECIDERE” nei master.
+- Backlog di implementazione (Jira) derivato dai FR nel PRD.
 - Snapshot Git disponibili (tag):
   - sacred-grail-20260518_215205
   - decisions-default_20260518_220306
   - models-mocks_20260518_220743
   - kpi-invariants_20260518_220933
   - traceability_20260518_221109
+  - ui-traceability_20260518_221346
+  - jira-backlog_20260518_221754
 
 ## Convenzioni
 
