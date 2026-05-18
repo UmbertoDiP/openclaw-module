@@ -297,6 +297,29 @@ EPIC-00 — Upstream OpenClaw + Wrap System (prodotto unico, modulo separato e a
   - STORY-00.3 Compatibilità upgrade: checklist e test smoke per ogni bump upstream
   - STORY-00.4 Tracciabilità release: wrapper tagga sempre “upstream_tag + upstream_commit”
 
+### 1.12A Gap analysis (FR ↔ upstream OpenClaw)
+
+Legenda copertura upstream:
+- Coperto: esiste una capability upstream direttamente riusabile dal wrapper (senza fork).
+- Parziale: esiste una capability upstream, ma manca contratto/tenancy/correlazione/policy specifica del wrapper.
+- Mancante: non esiste capability upstream utile; da implementare nel wrapper.
+
+| FR | Copertura upstream | Evidenza upstream (non esaustiva) | Gap / lavoro wrapper (unità mancanti) |
+|---|---|---|---|
+| FR-1 Clonazione nodo cliente | Mancante | N/A | Provisioning Hyper‑V (Golden Image → Client Node), naming/allocazione, audit provisioning |
+| FR-2 Isolamento rete NAT+ACL | Mancante | N/A | Isolated NAT + ACL policy (no LAN/no inter‑VM), test reachability, audit SECURITY |
+| FR-3 Jira ↔ n8n ↔ agente | Mancante | N/A | Webhook Jira + pipeline n8n + guardrail Pending Review + correlazione end‑to‑end |
+| FR-4 Audit & logging | Parziale | `docs/tools/trajectory.md`, `docs/cli/logs.md` | AuditEvent business (tenant/ticket/run), redazione, Explorer, export bundle “contrattuale” per tenant/ticket/run |
+| FR-5 Vault/Secrets | Parziale | `docs/cli/secrets.md` | Integrazione Vault (decisione default), policy accesso minimo, audit accessi secret nel modello wrapper |
+| FR-6 Reverse proxy “Casello” | Mancante | N/A | Reverse proxy unico ingress 8080, registry route per-tenant, health, audit cambi |
+| FR-7 Snapshot/Rollback DB | Mancante | N/A | DbSnapshot create/restore + enforcement `SNAPSHOT_REQUIRED` + audit correlato |
+| FR-8 Kill-switch / watchdog | Parziale | `/kill` e gestione run/subagent in `docs/tools/subagents.md` | Watchdog CPU/mem (soglie), STOP_RUN/DISABLE_AGENT, WatchdogEvent + AuditEvent |
+| FR-9 Onboarding bootstrap | Mancante | N/A | Bootstrap per-tenant (SSH keys/env/token), idempotenza, validazione input, audit bootstrap |
+| FR-10 Vector RAG | Parziale | `docs/cli/memory.md` | Confluence sync/cache + pgvector (decisione default), isolamento per-tenant, audit sync/retrieval |
+| FR-11 Air-Lock VPN | Mancante | N/A | Routing rules per VPN in VM senza rompere SSH/proxy, test automatici, audit esito |
+| FR-12 FinOps/Osservabilità | Parziale | `/usage` in `docs/tools/slash-commands.md` | Tracking per tenant/ticket/run + BudgetLimit enforcement (`BUDGET_BREACH` → STOP_RUNS) + audit |
+| FR-13 Offboarding & cold storage | Parziale | `docs/cli/backup.md`, `docs/cli/secrets.md` | Offboarding per tenant (purge segreti + export audit bundle + archive manifest), stato Tenant=OFFBOARDED |
+
 EPIC-01 — Provisioning Golden Image & Client Node (Hyper-V + accesso host)
 - Scope: FR-1, FR-2, FR-9, FR-11
 - Stories:
