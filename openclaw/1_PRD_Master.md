@@ -271,3 +271,62 @@ Leggi questi file nell’ordine:
 Regole:
 - Non inventare requisiti o modelli dati: se manca qualcosa, elenca domande.
 - Rispetta scope e non-scope.
+
+## 1.12 Backlog Implementazione (Jira)
+
+EPIC-01 — Provisioning Golden Image & Client Node (Hyper-V + accesso host)
+- Scope: FR-1, FR-2, FR-9, FR-11
+- Stories:
+  - STORY-01.1 Clonazione nodo cliente (Golden Image → Client Node)
+  - STORY-01.2 Isolamento rete Isolated NAT + ACL (no LAN / no inter-VM)
+  - STORY-01.3 Onboarding bootstrap (SSH keys + env + token)
+  - STORY-01.4 Air-Lock VPN (VPN in VM senza rompere SSH/proxy)
+
+EPIC-02 — Orchestrazione Jira ↔ n8n ↔ OpenClaw (state machine inviolabile)
+- Scope: FR-3 (vincoli BR-1/BR-2)
+- Stories:
+  - STORY-02.1 Webhook Jira: Selected for AI → n8n
+  - STORY-02.2 n8n pipeline (ingest → RAG → execute → update Jira)
+  - STORY-02.3 Guardrail Pending Review (blocco hard + POLICY_BLOCK)
+
+EPIC-03 — Audit & Logging + Export bundle
+- Scope: FR-4
+- Stories:
+  - STORY-03.1 AuditEvent append-only + correlazione obbligatoria
+  - STORY-03.2 Audit Explorer + export bundle per tenant/ticket/run
+
+EPIC-04 — Vault/Secrets (no leak)
+- Scope: FR-5
+- Stories:
+  - STORY-04.1 SecretItem contract + access audit + redazione obbligatoria
+
+EPIC-05 — Reverse Proxy “Casello” (single ingress 8080)
+- Scope: FR-6
+- Stories:
+  - STORY-05.1 ProxyRoute registry + health + audit modifiche route
+
+EPIC-06 — Time Machine DB (snapshot/rollback)
+- Scope: FR-7
+- Stories:
+  - STORY-06.1 DbSnapshot create/restore + policy SNAPSHOT_REQUIRED
+
+EPIC-07 — Kill-Switch / Watchdog
+- Scope: FR-8
+- Stories:
+  - STORY-07.1 WatchdogEvent + azioni STOP_RUN/DISABLE_AGENT + AuditEvent correlato
+
+EPIC-08 — Vector RAG (Confluence cache → pgvector)
+- Scope: FR-10
+- Stories:
+  - STORY-08.1 Confluence sync/cache + ingestion + audit
+
+EPIC-09 — FinOps/Osservabilità (token + budget)
+- Scope: FR-12
+- Stories:
+  - STORY-09.1 TokenUsage tracking per run/ticket/tenant
+  - STORY-09.2 BudgetLimit enforcement (BUDGET_BREACH → STOP_RUNS + audit)
+
+EPIC-10 — Offboarding & Cold Storage
+- Scope: FR-13
+- Stories:
+  - STORY-10.1 OffboardingJob (purge → export audit bundle → archive) + Tenant OFFBOARDED
