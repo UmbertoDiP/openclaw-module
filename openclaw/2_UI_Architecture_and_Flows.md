@@ -14,6 +14,7 @@ version: 0.1
 - Reverse proxy (routing verso UI)
 - Audit/Logs (explore + ricerca, per tenant/ticket/run)
 - FinOps/Osservabilità (dashboard costi/token + risorse)
+- Upstream/Upgrade (versione upstream + stato aggiornamento wrapper)
 - Provisioning (azione da host: script/command surface, non UI web)
 
 ## 2.2 Navigazione (happy path)
@@ -52,6 +53,7 @@ version: 0.1
 | Reverse Proxy — Routing | ProxyRoute, Node, AuditEvent | VALIDATION_ERROR, INTEGRATION_ERROR | Modifica route e health check → AuditEvent |
 | Audit/Logs — Explorer | AuditEvent, AutomationRun, JiraTicket | FORBIDDEN | Export bundle per tenant/ticket/run |
 | FinOps/Osservabilità — Dashboard | TokenUsage, BudgetLimit, WatchdogEvent, AuditEvent | BUDGET_BREACH, INTEGRATION_ERROR | Modifiche budget/azioni contenimento → AuditEvent |
+| Upstream/Upgrade — Versioning | UpstreamSourcePin, UpgradeRun, AuditEvent | VALIDATION_ERROR, INTEGRATION_ERROR | Ogni upgrade attempt → AuditEvent correlato |
 ### Vista: Jira — Ticket Detail (Selected for AI / Processing / Pending Review)
 
 

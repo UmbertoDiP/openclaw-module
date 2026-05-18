@@ -41,6 +41,19 @@ version: 0.1
 - Sostituzione di Jira/Confluence: il sistema integra e automatizza, non rimpiazza.
 - Deploy diretto in produzione senza revisione umana (vietato per requisito).
 
+## 1.2A Strategia Upstream (OpenClaw) & Wrapper
+
+- Obiettivo: assemblare un prodotto unico mantenendo OpenClaw come upstream separato e aggiornabile; tutte le personalizzazioni vivono nel wrapper.
+- Vincolo: evitare fork permanenti dell’upstream; se serve una modifica generica, aprire PR upstream. Il wrapper gestisce integrazione/contratto/guardrail.
+- Struttura:
+  - Upstream: repo OpenClaw ufficiale come submodule (pinned a una release/tag).
+  - Wrapper (“wrap system”): componenti OpenClaw-Module che orchestrano VM, guardrail, audit, policy Jira, e integrazioni (n8n/Confluence/Vault), esponendo un contratto stabile.
+- Strategia upgrade:
+  - Step 1: aggiornare il puntamento del submodule a una release/tag successiva.
+  - Step 2: eseguire una gap analysis dei punti di integrazione (API/CLI/config/plugin).
+  - Step 3: adeguare il wrapper e aggiornare test/diagnostica.
+  - Step 4: taggare la release del wrapper, mantenendo tracciabilità (versione upstream + commit).
+
 ## 1.3 Attori, Ruoli, Permessi
 
 - Operatore (Owner)
@@ -275,6 +288,14 @@ Regole:
 - La fase codice non avviene in questo repo: usa i master come contratto read-only e segui `docs/CONTEXT.md` (sezione “Fase Codice”).
 
 ## 1.12 Backlog Implementazione (Jira)
+
+EPIC-00 — Upstream OpenClaw + Wrap System (prodotto unico, modulo separato e aggiornabile)
+- Scope: 1.2A (strategia upstream/wrapper) + vincoli di governance
+- Stories:
+  - STORY-00.1 Pin upstream (submodule) + registrazione versione/commit + procedura update
+  - STORY-00.2 Definizione boundary: adapter/contract tra wrapper e upstream (API/CLI/config/plugin)
+  - STORY-00.3 Compatibilità upgrade: checklist e test smoke per ogni bump upstream
+  - STORY-00.4 Tracciabilità release: wrapper tagga sempre “upstream_tag + upstream_commit”
 
 EPIC-01 — Provisioning Golden Image & Client Node (Hyper-V + accesso host)
 - Scope: FR-1, FR-2, FR-9, FR-11

@@ -24,6 +24,7 @@ version: 0.1
 - BudgetLimit governa esecuzioni: al breach deve esserci un evento di blocco (`BUDGET_BREACH`) e un AuditEvent correlato.
 - WatchdogEvent implica audit: ogni intervento del kill-switch deve generare AuditEvent correlato.
 - OffboardingJob chiude il tenant: al successo, `Tenant.status` diventa `OFFBOARDED` e deve esistere export audit bundle.
+- UpstreamSourcePin e UpgradeRun sono system-scoped: descrivono versionamento/upgrade del prodotto e possono non avere `tenantId`.
 
 ## 3.2 Modelli Dati
 
@@ -129,6 +130,94 @@ version: 0.1
     },
     "createdAt": "2026-05-18T21:10:00Z",
     "updatedAt": "2026-05-18T21:12:00Z"
+  }
+]
+```
+
+### Model: UpstreamSourcePin
+
+**Descrizione business**
+- Puntamento esplicito dell’upstream OpenClaw (repo/tag/commit) usato dal prodotto, per rendere gli upgrade ripetibili e tracciabili.
+
+**Schema**
+- id: string (required) es. `upstream_openclaw`
+- repoUrl: string (required)
+- tag: string (required)
+- commit: string (required)
+- pinnedAt: string (ISO-8601) (required)
+
+**Vincoli**
+- `tag` e `commit` devono essere coerenti con la repo; ogni variazione deve generare AuditEvent.
+
+**Mock JSON (singolo)**
+```json
+{
+  "id": "upstream_openclaw",
+  "repoUrl": "https://github.com/openclaw/openclaw",
+  "tag": "v2026.4.26",
+  "commit": "be8c24633aaa7ef0425ae1178f096ee8dd6226c0",
+  "pinnedAt": "2026-05-18T22:33:55Z"
+}
+```
+
+**Mock JSON (lista)**
+```json
+[
+  {
+    "id": "upstream_openclaw",
+    "repoUrl": "https://github.com/openclaw/openclaw",
+    "tag": "v2026.4.26",
+    "commit": "be8c24633aaa7ef0425ae1178f096ee8dd6226c0",
+    "pinnedAt": "2026-05-18T22:33:55Z"
+  }
+]
+```
+
+### Model: UpgradeRun
+
+**Descrizione business**
+- Tentativo di aggiornamento dell’upstream e/o del wrapper con esito, motivazione e riferimenti di tracciabilità.
+
+**Schema**
+- id: string (required) es. `upg_20260518_0001`
+- upstreamFrom: object (required)
+  - tag: string (required)
+  - commit: string (required)
+- upstreamTo: object (required)
+  - tag: string (required)
+  - commit: string (required)
+- status: string (required) enum: `PLANNED|RUNNING|SUCCESS|FAILED|ROLLED_BACK`
+- startedAt: string (ISO-8601) (required)
+- finishedAt: string (ISO-8601) (optional)
+- notes: string (optional)
+
+**Vincoli**
+- ogni UpgradeRun deve avere AuditEvent correlato; in caso di `FAILED` o `ROLLED_BACK` deve esistere evidenza (export bundle o log redatti).
+
+**Mock JSON (singolo)**
+```json
+{
+  "id": "upg_20260518_0001",
+  "upstreamFrom": { "tag": "v2026.4.26", "commit": "be8c24633aaa7ef0425ae1178f096ee8dd6226c0" },
+  "upstreamTo": { "tag": "v2026.5.10", "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" },
+  "status": "PLANNED",
+  "startedAt": "2026-05-18T22:40:00Z",
+  "finishedAt": null,
+  "notes": "Upgrade pianificato: eseguire smoke test wrapper e verificare punti di integrazione (CLI/config/plugin)."
+}
+```
+
+**Mock JSON (lista)**
+```json
+[
+  {
+    "id": "upg_20260518_0001",
+    "upstreamFrom": { "tag": "v2026.4.26", "commit": "be8c24633aaa7ef0425ae1178f096ee8dd6226c0" },
+    "upstreamTo": { "tag": "v2026.5.10", "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" },
+    "status": "PLANNED",
+    "startedAt": "2026-05-18T22:40:00Z",
+    "finishedAt": null,
+    "notes": "Upgrade pianificato: eseguire smoke test wrapper e verificare punti di integrazione (CLI/config/plugin)."
   }
 ]
 ```

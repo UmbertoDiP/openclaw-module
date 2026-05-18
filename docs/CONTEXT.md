@@ -35,6 +35,7 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
 ## Stato Corrente
 
 - Repo inizializzato come template “OpenClaw module” (solo Markdown).
+- Repo upstream agganciata come submodule: `upstream/openclaw` (OpenClaw `v2026.4.26` / commit `be8c246`).
 - Sacro Graal protetto (fonte editabile + backup immutabile read-only).
 - Decisioni default fissate (UI/Vault/RAG/Audit/porte/subnet/naming).
 - Struttura consolidata e coerente in 3 file master (PRD/UI/Data), senza “DA DECIDERE” nei master.
@@ -47,6 +48,9 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
   - traceability_20260518_221109
   - ui-traceability_20260518_221346
   - jira-backlog_20260518_221754
+  - ingresso-code-phase_20260518_222411
+  - code-phase-prereqs_20260518_222703
+  - upstream-openclaw_v2026.4.26_20260518_223355
 
 ## Convenzioni
 
@@ -78,6 +82,7 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
 - Crea una workspace separata per la fase codice (non in questo repo contesto-only).
 - Importa il contesto come input read-only nella nuova workspace; i master restano la fonte (eventuale copia solo per consultazione).
 - Se l’ambiente limita operazioni fuori workspace: usa un submodule “upstream” dentro questo repo solo per scaricare/agganciare il codice sorgente.
+- Il wrapper è la sola area di personalizzazione: l’upstream resta separato e aggiornabile (pull del submodule); gli adattamenti vivono nel “wrap system”.
 
 ### Prerequisiti tecnici
 
