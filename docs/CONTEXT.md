@@ -77,10 +77,11 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
 
 - Crea una workspace separata per la fase codice (non in questo repo contesto-only).
 - Importa il contesto come input read-only nella nuova workspace; i master restano la fonte (eventuale copia solo per consultazione).
+- Se l’ambiente limita operazioni fuori workspace: usa un submodule “upstream” dentro questo repo solo per scaricare/agganciare il codice sorgente.
 
 ### Prerequisiti tecnici
 
-- Repo ufficiale OpenClaw: DA DECIDERE (URL/hosting).
+- Repo ufficiale OpenClaw: https://github.com/openclaw/openclaw (pinned: `v2026.4.26` / commit `be8c246`).
 - Workspace fase codice (default): una cartella separata accanto a questo repo (es. `../openclaw-code`).
 - Definisci repo ufficiale OpenClaw e modalità: fork vs clone diretto (preferire fork per isolare le modifiche).
 - Policy segreti: nessun `.env` committato; segreti solo via secret manager; redazione log obbligatoria.
@@ -90,6 +91,7 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
 
 - Clona/forka la repo ufficiale nella nuova workspace e crea branch `integration-from-context`.
 - Inietta il contratto: mappa FR → moduli/servizi reali e crea backlog tecnico equivalente.
+- Se usi il submodule in questo repo: il codice upstream è agganciato in `upstream/openclaw` (checkout `v2026.4.26`).
 
 ### Gap analysis (repo vs contratto)
 
