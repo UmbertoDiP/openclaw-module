@@ -22,6 +22,16 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
 - Fonte originale (editabile): `openclaw/0_CORE_DA_COMPILARE.md`
 - Backup immutabile (read-only): `openclaw/0_CORE__SACRO_GRAAL__IMMUTABLE__20260518_215205.md`
 
+## Decisioni Default (vincolanti)
+
+- Interfaccia AI: Open WebUI.
+- Vault/Secrets: HashiCorp Vault (single-node per VM) + redazione obbligatoria.
+- Vector RAG: Postgres + pgvector (locale VM) con isolamento per tenant.
+- Audit log: append-only + export bundle; retention 365 giorni (configurabile).
+- Host → VM: solo 22 (SSH) e 8080 (reverse proxy).
+- Subnet per tenant: 172.29.0.0/16, allocazione /24 per tenant.
+- Naming: `tnt_<slug>`, `node_<slug>_<nn>`, `run_<yyyymmdd>_<seq>`.
+
 ## Stato Corrente
 
 - Repo inizializzato come template “OpenClaw module” (solo Markdown).

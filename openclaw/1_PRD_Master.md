@@ -18,7 +18,7 @@ version: 0.1
 **In scope**
 - Golden Image Hyper-V clonabile per cliente (“Client Node”).
 - Provisioning da host Windows: clonazione VM + isolamento rete (Isolated NAT + ACL su vNIC) + accesso da host (SSH e web via reverse proxy).
-- Stack base in VM (Docker): orchestrazione automazione (n8n), interfaccia AI (DA DECIDERE: Open WebUI o AnythingLLM), componenti per automazione browser headless e debugging remoto.
+- Stack base in VM (Docker): orchestrazione automazione (n8n), interfaccia AI (Open WebUI), componenti per automazione browser headless e debugging remoto.
 - Integrazione operativa Jira ↔ n8n ↔ OpenClaw con state machine inviolabile fino a Pending Review.
 - Sync Confluence → cache Markdown locale per RAG + indicizzazione vettoriale locale (Vector RAG).
 - 12 moduli infrastrutturali: Security/Vault, Audit/Logging, Local CI runner, Reverse Proxy, Snapshot/Rollback DB, Kill-switch, Onboarding wizard, Vector RAG, Air-Lock VPN, Agent Toolbelt API, FinOps/Osservabilità, Offboarding/Cold storage.
@@ -190,9 +190,9 @@ BR-3: Segreti mai in chiaro
 - Affidabilità:
 - Snapshot/rollback; ripartenza controllata; idempotenza onboarding.
 - Audit/Log (solo a livello requisiti):
-- Correlazione end-to-end; retention (DA DECIDERE); esportabilità.
+- Correlazione end-to-end; retention 365 giorni (configurabile); esportabilità (bundle per tenant/ticket/run).
 - Accessibilità:
-- Non applicabile se si usano UI di terze parti; se UI custom, DA DECIDERE requisiti.
+- Non applicabile (UI principalmente di terze parti / tooling).
 
 ## 1.8 Vincoli e Assunzioni
 
@@ -205,7 +205,7 @@ BR-3: Segreti mai in chiaro
 **Assunzioni**
 - Jira e Confluence disponibili e accessibili con service account.
 - La VM può eseguire Docker.
-- Porte e subnet possono essere allocate senza collisioni (DA DECIDERE: range standard).
+- Porte e subnet possono essere allocate senza collisioni (range standard definito in Decisioni).
 
 ## 1.9 Edge Case (alto livello)
 
@@ -215,14 +215,22 @@ BR-3: Segreti mai in chiaro
 - Agent loop o runaway cost (kill-switch + FinOps).
 - Snapshot non consistente / restore fallito.
 
-## 1.10 Domande Aperte (DA DECIDERE)
+## 1.10 Domande Aperte
 
-- Interfaccia AI: Open WebUI o AnythingLLM?
-- Tecnologia Vault e modalità di redazione segreti nei log.
-- Scelta DB vettoriale e formato indice (locale) + strategia multi-tenant.
-- Retention e formato audit log (durata, export, storage).
-- Elenco porte consentite da host verso VM oltre a SSH/8080.
-- Strategia di naming/ID per tenant e nodi.
+Nessuna (decisioni default definite; cambiare solo con ADR esplicito).
+
+## 1.10A Decisioni Default (vincolanti finché non cambiate)
+
+- Interfaccia AI: Open WebUI.
+- Vault/Secrets: HashiCorp Vault (single-node per VM) con accesso minimo e redazione obbligatoria nei log.
+- Vector RAG: Postgres + pgvector in locale VM, isolamento per-tenant (namespace logico per tenant).
+- Audit log: append-only events correlati (tenantId/ticketId/runId), esportabili; retention 365 giorni (configurabile).
+- Porte esposte Host → VM: 22 (SSH) e 8080 (reverse proxy). Nessuna altra porta esposta; i servizi UI interni sono raggiunti solo tramite reverse proxy.
+- Subnet standard per tenant: 172.29.0.0/16 riservato; allocazione per-tenant /24 (es. 172.29.10.0/24).
+- Naming standard:
+  - tenantId: `tnt_<slug>`
+  - nodeId: `node_<slug>_<nn>`
+  - runId: `run_<yyyymmdd>_<seq>`
 
 ## 1.11 Istruzioni per l’AI builder
 

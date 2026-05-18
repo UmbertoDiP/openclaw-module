@@ -10,10 +10,10 @@ version: 0.1
 
 - Jira (Board + Ticket detail)
 - n8n (Workflow list + Execution detail)
-- Interfaccia AI (DA DECIDERE: Open WebUI o AnythingLLM)
+- Interfaccia AI (Open WebUI)
 - Reverse proxy (routing verso UI)
-- Audit/Logs (vista consultazione: DA DECIDERE se UI dedicata o via strumenti esistenti)
-- FinOps/Osservabilità (dashboard: DA DECIDERE)
+- Audit/Logs (explore + ricerca, per tenant/ticket/run)
+- FinOps/Osservabilità (dashboard costi/token + risorse)
 - Provisioning (azione da host: script/command surface, non UI web)
 
 ## 2.2 Navigazione (happy path)
@@ -30,8 +30,8 @@ version: 0.1
 - Pannello esecuzioni e log step-by-step (n8n)
 - Chat/sessioni e strumenti operativi (Interfaccia AI)
 - Routing/ingress per UI (reverse proxy)
-- Vista eventi audit filtrabile per tenant/ticket/run (DA DECIDERE)
-- Vista costi/token e anomalie (DA DECIDERE)
+- Vista eventi audit filtrabile per tenant/ticket/run
+- Vista costi/token e anomalie
 
 ## 2.4 Stati UI (obbligatori per ogni vista)
 
@@ -44,7 +44,6 @@ version: 0.1
 
 ### Vista: Jira — Ticket Detail (Selected for AI / Processing / Pending Review)
 
-- Scopo:
 - Scopo: rappresentare la singola unità di lavoro tracciata e governare lo stato macchina.
 - Chi la usa: Operatore, (in lettura) Agente tramite integrazione.
 - Dati richiesti: ticket, stato, campi AI_Processed/Approval_Required (se presenti), allegati, commenti, link a audit run.
@@ -84,9 +83,54 @@ version: 0.1
 
 **Stati UI**
 - Loading: contesto in setup; input disabilitato se non pronto.
-- Empty: nessun ticket associato (DA DECIDERE comportamento).
+- Empty: nessun ticket associato → mostra selettore tenant/ticket o istruzione di associare un ticket.
 - Success: sessione attiva con strumenti disponibili.
 - Error: perdita connessione/permessi; fallback su logs/audit.
+
+### Vista: Reverse Proxy — Routing verso UI
+
+- Scopo: esporre tutte le UI interne tramite un singolo punto di ingresso (porta 8080) evitando conflitti.
+- Chi la usa: Operatore.
+- Dati richiesti: elenco servizi, route attive, health check per servizio, mapping host/path.
+- Azioni principali: abilitare/disabilitare route; verificare health; consultare errori di routing.
+- Validazioni: nessuna esposizione diretta di porte interne; route isolate per tenant.
+- Messaggi (success/error): servizio down; route non valida; conflitto mapping.
+
+**Stati UI**
+- Loading: configurazione in caricamento; azioni disabilitate.
+- Empty: nessuna route configurata.
+- Success: routes attive con stato health.
+- Error: errore di proxy/routing con suggerimento di remediation.
+
+### Vista: Audit/Logs — Explorer (tenant/ticket/run)
+
+- Scopo: consultare eventi audit e log di esecuzione correlati, con ricerca e filtri.
+- Chi la usa: Operatore.
+- Dati richiesti: audit events, riferimenti ticket/run, log redatti, export bundle.
+- Azioni principali: filtrare per tenant/ticket/run; aprire dettaglio evento; esportare bundle; verificare redazione.
+- Validazioni: log sempre redatti; accesso solo Operatore; isolamento per tenant.
+- Messaggi (success/error): export fallito; permessi; log mancanti.
+
+**Stati UI**
+- Loading: eventi in caricamento; export disabilitato.
+- Empty: nessun evento per i filtri.
+- Success: timeline + dettaglio evento.
+- Error: storage non raggiungibile; retry.
+
+### Vista: FinOps/Osservabilità — Dashboard
+
+- Scopo: vedere consumo risorse e token, budget e anomalie; supportare kill-switch decisionale.
+- Chi la usa: Operatore.
+- Dati richiesti: token usage per run/ticket/tenant, budget limit, metriche CPU/RAM/Disk, alerts.
+- Azioni principali: impostare budget; riconoscere anomalie; attivare azioni di contenimento (es. stop run).
+- Validazioni: threshold configurabili; audit delle modifiche a budget/limit.
+- Messaggi (success/error): soglia superata; metriche non disponibili; aggiornamento budget fallito.
+
+**Stati UI**
+- Loading: metriche in caricamento; azioni limitate.
+- Empty: nessun dato (nuovo tenant) → CTA “inizializza baseline”.
+- Success: dashboard con trend e alert.
+- Error: collector down; fallback su audit.
 
 ## 2.6 Regole UI (derivate da business)
 
