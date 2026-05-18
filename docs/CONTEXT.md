@@ -118,3 +118,4 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
 
 - Per ogni tranche: test minimi + evidenze (log redatti) + tag Git.
 - Verifica KPI e invarianti (tenant isolation, no secrets, pending review hard stop).
+- Per ogni bump upstream: seguire la checklist PRD sezione 1.2A.4 e registrare `UpstreamSourcePin` + `UpgradeRun` con AuditEvent correlato.

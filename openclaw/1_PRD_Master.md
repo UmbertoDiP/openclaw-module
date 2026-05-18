@@ -88,6 +88,37 @@ Principio: il wrapper usa upstream come “engine” tramite superfici stabili (
 - Il wrapper non dipende da dettagli interni di upstream (file path, shape di storage non documentati); dipende solo da entrypoint pubblici (CLI/docs/contracts).
 - Ogni bump upstream richiede: aggiornamento `UpstreamSourcePin`, esecuzione smoke test wrapper, registrazione `UpgradeRun`, e tag wrapper che include `upstream_tag + upstream_commit`.
 
+### 1.2A.4 Procedura upgrade upstream (submodule) — checklist + smoke test (STORY-00.1/00.3)
+
+**Obiettivo**
+- Rendere ogni bump upstream ripetibile, verificabile, e tracciato (prima/dopo) nel wrapper.
+
+**Prerequisiti**
+- Working tree pulito (wrapper) e baseline taggata.
+- Target upstream definito come `tag + commit` (non “branch tip”).
+
+**Checklist operativa (wrapper)**
+- 1) Pianificazione:
+  - Crea un `UpgradeRun` con `status=PLANNED` e campi `upstreamFrom`/`upstreamTo`.
+  - Registra un AuditEvent di tipo `STATE_CHANGE` o equivalente (upgrade pianificato).
+- 2) Esecuzione bump:
+  - Aggiorna il puntamento del submodule `upstream/openclaw` al target `tag+commit`.
+  - Aggiorna `UpstreamSourcePin` (repoUrl/tag/commit/pinnedAt) e genera AuditEvent correlato.
+- 3) Smoke test upstream (minimo):
+  - `openclaw status --all` (diagnostica generale).
+  - `openclaw health --json` (snapshot health da gateway, se in esecuzione).
+  - `openclaw secrets audit --check` (nessun plaintext/unresolved).
+  - `openclaw secrets reload` (swap atomico snapshot runtime, se applicabile).
+  - `openclaw memory status --deep` (se la memory plugin è attiva e configurata).
+  - `openclaw logs --limit 200` (assenza errori bloccanti, output redatto).
+- 4) Smoke test wrapper (contrattuale):
+  - Verifica che ogni invocazione upstream nel flusso wrapper erediti `runId` e generi `AuditEvent` correlato (`tenantId/ticketId/runId`).
+  - Verifica che il guardrail “Pending Review” sia non bypassabile (errore `POLICY_BLOCK` + audit).
+  - Verifica che l’export bundle del wrapper includa `upstream_tag + upstream_commit` (provenienza release).
+- 5) Chiusura:
+  - Se OK: imposta `UpgradeRun.status=SUCCESS`, registra AuditEvent finale, e tagga la release wrapper includendo `upstream_tag + upstream_commit`.
+  - Se KO: ripristina submodule a `upstreamFrom`, imposta `UpgradeRun.status=ROLLED_BACK`, e allega evidenze (export bundle o log redatti).
+
 ## 1.3 Attori, Ruoli, Permessi
 
 - Operatore (Owner)
@@ -327,8 +358,12 @@ EPIC-00 — Upstream OpenClaw + Wrap System (prodotto unico, modulo separato e a
 - Scope: 1.2A (strategia upstream/wrapper) + vincoli di governance
 - Stories:
   - STORY-00.1 Pin upstream (submodule) + registrazione versione/commit + procedura update
+    - Done: `UpstreamSourcePin` aggiornato (tag+commit+pinnedAt) e AuditEvent correlato
+    - Done: `UpgradeRun` creato e chiuso (SUCCESS/FAILED/ROLLED_BACK) con evidenze
   - STORY-00.2 Definizione boundary: adapter/contract tra wrapper e upstream (API/CLI/config/plugin)
   - STORY-00.3 Compatibilità upgrade: checklist e test smoke per ogni bump upstream
+    - Done: eseguita la checklist di sezione 1.2A.4
+    - Done: smoke test upstream minimi ok + smoke test wrapper contrattuali ok
   - STORY-00.4 Tracciabilità release: wrapper tagga sempre “upstream_tag + upstream_commit”
 
 ### 1.12A Gap analysis (FR ↔ upstream OpenClaw)
