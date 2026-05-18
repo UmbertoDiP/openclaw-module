@@ -54,6 +54,40 @@ version: 0.1
   - Step 3: adeguare il wrapper e aggiornare test/diagnostica.
   - Step 4: taggare la release del wrapper, mantenendo tracciabilità (versione upstream + commit).
 
+### 1.2A.1 Boundary tecnico (STORY-00.2) — entrypoint upstream e responsabilità wrapper
+
+Principio: il wrapper usa upstream come “engine” tramite superfici stabili (CLI/RPC/config/plugins) e aggiunge governance/tenancy/audit/policy; non modifica codice upstream nel repository wrapper.
+
+**Superfici upstream ammesse (entrypoint)**
+- CLI `openclaw …`: invocazione comandi per operazioni standard (status/health/logs/secrets/memory/export-trajectory).
+- Gateway API/RPC (WebSocket): uso di metodi esposti dal Gateway per interrogazioni/azioni “remote-safe” (es. tail logs, reload secrets).
+- Configurazione: gestione `openclaw.json` e snapshot runtime secondo convenzioni upstream (no campi custom non supportati).
+- Plugin/skills: uso delle estensioni upstream come unità caricabili; nessuna patch locale del codice upstream.
+
+**Responsabilità del wrapper (non upstream)**
+- Tenancy e lifecycle: `Tenant`/`Node` (Hyper‑V) + provisioning + onboarding + offboarding.
+- Orchestrazione Jira/Confluence/n8n: state machine inviolabile fino a Pending Review e correlazione con ticket/run.
+- Audit “business”: `AuditEvent` append-only con correlazione `tenantId/ticketId/runId`, redazione, explorer, export bundle contrattuale.
+- Security/Vault: enforcement “no secrets in chiaro”, accesso minimo necessario, policy + audit su accessi.
+- Reverse proxy: single ingress host 8080, routing per-tenant, health, audit cambi.
+- FinOps/Osservabilità: tracking e budget enforcement (BUDGET_BREACH → STOP_RUNS) con audit.
+- DB snapshot/rollback e watchdog: enforcement policy (SNAPSHOT_REQUIRED, STOP_RUN/DISABLE_AGENT) con eventi correlati.
+
+### 1.2A.2 Contratto wrapper ↔ upstream (v1)
+
+| Area | Wrapper fornisce | Wrapper chiama upstream via | Note vincolanti |
+|---|---|---|---|
+| Identità run | `runId` deterministico + binding a tenant/ticket | CLI/Gateway (come “engine”) | Ogni invocazione upstream deve ereditare `runId` e produrre audit correlato nel wrapper |
+| Audit/diagnostica | `AuditEvent` + export bundle per tenant/ticket/run | `openclaw logs`, `export-trajectory` | Export upstream è “support bundle”; non sostituisce export contrattuale wrapper |
+| Secrets | Vault/SecretItem + redazione obbligatoria | `openclaw secrets …` | Wrapper gestisce policy e audit; upstream gestisce SecretRefs/snapshot runtime |
+| Memoria/RAG | Confluence cache + pgvector per-tenant | `openclaw memory …` (se usato) | L’isolamento per-tenant e la provenance Confluence sono responsabilità wrapper |
+| Guardrail operativi | Pending Review hard-block, kill-switch, budget stop | `/kill` e gestione run (se disponibile) | Il wrapper è la fonte di verità per policy; upstream non deve “bypassare” il blocco |
+
+### 1.2A.3 Regole di compatibilità (upgrade-safe)
+
+- Il wrapper non dipende da dettagli interni di upstream (file path, shape di storage non documentati); dipende solo da entrypoint pubblici (CLI/docs/contracts).
+- Ogni bump upstream richiede: aggiornamento `UpstreamSourcePin`, esecuzione smoke test wrapper, registrazione `UpgradeRun`, e tag wrapper che include `upstream_tag + upstream_commit`.
+
 ## 1.3 Attori, Ruoli, Permessi
 
 - Operatore (Owner)
