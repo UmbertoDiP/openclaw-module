@@ -13,6 +13,17 @@ version: 0.1
 - Problema che risolve: dare a un agente AI operativo un ambiente per-cliente sicuro, tracciabile e reversibile, evitando contaminazioni tra clienti e azioni irreversibili in produzione.
 - Risultato atteso per l’utente: clonare un nodo cliente in modo ripetibile, far lavorare l’agente su task tracciati (Jira) con audit end-to-end, e mantenere controllo (Pending Review, rollback, kill-switch, offboarding).
 
+## 1.1A KPI / Criteri di Successo
+
+- Provisioning: un Client Node raggiunge stato READY e risponde a SSH entro 15 minuti dalla richiesta.
+- Isolamento rete: 0 casi di reachability inter-VM/LAN per un nodo cliente; egress Internet operativo per 80/443.
+- Workflow Jira: 100% dei ticket “Selected for AI” terminano automaticamente in “Pending Review” (mai oltre).
+- Audit: 100% dei run generano eventi audit correlati (tenantId + ticketId + runId) e export bundle riuscito.
+- Reversibilità: ripristino da snapshot DB con RTO ≤ 5 minuti (per il DB target) e con evidenza audit.
+- Kill-switch: runaway CPU/MEM o runaway calls determinano STOP_RUN o DISABLE_AGENT entro 60 secondi dal superamento soglia.
+- Confluence cache/RAG: sync schedulato con success rate ≥ 99% e retrieval locale senza dipendenza runtime dalla rete.
+- FinOps: budget breach genera blocco esecuzioni (STOP_RUNS) e audit event; nessuna esecuzione oltre budget senza override Operatore.
+
 ## 1.2 Scope / Non-Scope
 
 **In scope**

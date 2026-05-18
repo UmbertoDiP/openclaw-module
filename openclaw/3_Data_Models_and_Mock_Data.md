@@ -11,6 +11,20 @@ version: 0.1
 - Ogni modello: nome, significato business, campi, vincoli, mock JSON singolo + lista.
 - Includere payload errore (validazione/permessi) per guidare stati UI.
 
+## 3.1A Relazioni & Invarianti
+
+- Tenant è la radice di isolamento: ogni entità operativa deve avere tenantId.
+- Node appartiene a Tenant: `Node.tenantId` deve riferirsi a `Tenant.id`.
+- JiraTicket appartiene a Tenant: `JiraTicket.tenantId` deve riferirsi a `Tenant.id`.
+- AutomationRun è correlato: `AutomationRun.tenantId` e `AutomationRun.ticketId` devono essere coerenti con il ticket.
+- AuditEvent è append-only e correlabile: ogni evento deve includere `tenantId` e almeno uno tra `ticketId` o `runId`; per eventi di run, entrambi.
+- SecretItem non contiene mai il segreto: il valore è solo referenziato via `valueRef`; ogni accesso deve generare AuditEvent.
+- ProxyRoute non espone porte interne all’host: tutte le UI passano da entrypoint `HOST_8080`.
+- DbSnapshot precede operazioni distruttive: azioni distruttive senza snapshot devono produrre errore `SNAPSHOT_REQUIRED` o AuditEvent di eccezione esplicita.
+- BudgetLimit governa esecuzioni: al breach deve esserci un evento di blocco (`BUDGET_BREACH`) e un AuditEvent correlato.
+- WatchdogEvent implica audit: ogni intervento del kill-switch deve generare AuditEvent correlato.
+- OffboardingJob chiude il tenant: al successo, `Tenant.status` diventa `OFFBOARDED` e deve esistere export audit bundle.
+
 ## 3.2 Modelli Dati
 
 ### Model: Tenant
