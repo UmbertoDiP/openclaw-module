@@ -80,6 +80,8 @@ Regola: se un’informazione è necessaria per costruire il modulo/app, deve sta
 
 ### Prerequisiti tecnici
 
+- Repo ufficiale OpenClaw: DA DECIDERE (URL/hosting).
+- Workspace fase codice (default): una cartella separata accanto a questo repo (es. `../openclaw-code`).
 - Definisci repo ufficiale OpenClaw e modalità: fork vs clone diretto (preferire fork per isolare le modifiche).
 - Policy segreti: nessun `.env` committato; segreti solo via secret manager; redazione log obbligatoria.
 - Baseline verifica: lint/test, CI locale, standard commit/tag per step funzionali.

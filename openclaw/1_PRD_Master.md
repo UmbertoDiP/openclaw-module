@@ -267,10 +267,12 @@ Leggi questi file nell’ordine:
 1. `openclaw/1_PRD_Master.md`
 2. `openclaw/2_UI_Architecture_and_Flows.md`
 3. `openclaw/3_Data_Models_and_Mock_Data.md`
+4. `docs/CONTEXT.md` (governance + “Fase Codice”)
 
 Regole:
 - Non inventare requisiti o modelli dati: se manca qualcosa, elenca domande.
 - Rispetta scope e non-scope.
+- La fase codice non avviene in questo repo: usa i master come contratto read-only e segui `docs/CONTEXT.md` (sezione “Fase Codice”).
 
 ## 1.12 Backlog Implementazione (Jira)
 
