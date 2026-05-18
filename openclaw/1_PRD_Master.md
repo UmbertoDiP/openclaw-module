@@ -243,6 +243,24 @@ Nessuna (decisioni default definite; cambiare solo con ADR esplicito).
   - nodeId: `node_<slug>_<nn>`
   - runId: `run_<yyyymmdd>_<seq>`
 
+## 1.10B Matrice di Tracciabilità (FR ↔ UI ↔ Data ↔ Audit)
+
+| FR | UI primaria | Modelli (Data) | Errori chiave (mock) | Audit atteso |
+|---|---|---|---|---|
+| FR-1 Clonazione nodo | Provisioning (host) + Reverse Proxy | Tenant, Node, AuditEvent | VALIDATION_ERROR, INTEGRATION_ERROR | Eventi COMMAND/STATE_CHANGE correlati a tenantId + nodeId |
+| FR-2 Isolamento rete | Provisioning (host) | Node, AuditEvent | POLICY_BLOCK, INTEGRATION_ERROR | Eventi SECURITY con esito test reachability |
+| FR-3 Jira ↔ n8n ↔ agente | Jira Ticket Detail + n8n Execution Detail | JiraTicket, AutomationRun, AuditEvent | INTEGRATION_ERROR, POLICY_BLOCK | Audit end-to-end tenantId + ticketId + runId |
+| FR-4 Audit & logging | Audit/Logs Explorer | AuditEvent, AutomationRun | FORBIDDEN | Export bundle per tenant/ticket/run |
+| FR-5 Vault/Secrets | Interfaccia AI (Open WebUI) + Audit/Logs | SecretItem, AuditEvent | POLICY_BLOCK, FORBIDDEN | Ogni accesso secret → AuditEvent (redacted=true) |
+| FR-6 Reverse proxy | Reverse Proxy Routing | ProxyRoute, Node, AuditEvent | VALIDATION_ERROR, INTEGRATION_ERROR | Cambio route → AuditEvent |
+| FR-7 Snapshot/Rollback DB | n8n Execution Detail + Audit/Logs | DbSnapshot, AuditEvent, AutomationRun | SNAPSHOT_REQUIRED, INTEGRATION_ERROR | Creazione/restore snapshot → AuditEvent |
+| FR-8 Kill-switch | FinOps/Osservabilità + Audit/Logs | WatchdogEvent, AuditEvent | POLICY_BLOCK | Intervento watchdog → WatchdogEvent + AuditEvent |
+| FR-9 Onboarding | Provisioning (host) + Interfaccia AI | Tenant, Node, SecretItem, AuditEvent | VALIDATION_ERROR, POLICY_BLOCK | Bootstrap run con evidenza audit |
+| FR-10 Vector RAG | n8n Execution Detail + Interfaccia AI | ConfluencePage, AuditEvent | INTEGRATION_ERROR | Sync e retrieval tracciati in audit |
+| FR-11 Air-Lock VPN | Provisioning (host) + Reverse Proxy | Node, AuditEvent | INTEGRATION_ERROR | Evidenza “SSH/proxy ok con VPN” in audit |
+| FR-12 FinOps/Osservabilità | FinOps/Osservabilità + n8n Execution Detail | TokenUsage, BudgetLimit, AuditEvent | BUDGET_BREACH | Breach → blocco + AuditEvent correlato |
+| FR-13 Offboarding | Audit/Logs + Provisioning (host) | OffboardingJob, Tenant, AuditEvent | INTEGRATION_ERROR | Export audit + purge segreti + Tenant=OFFBOARDED |
+
 ## 1.11 Istruzioni per l’AI builder
 
 Leggi questi file nell’ordine:
